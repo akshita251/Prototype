@@ -21,17 +21,20 @@ mongoose.connect(
 );
 
 async function connect() {
-    // const amqpServer = "amqp://localhost:5672";
-    const amqpServer = "amqp://localhost:5672"
-    connection = await amqp.connect(amqpServer);
+   try {
+    const amqpServer = "amqp://rabbitmq:5672"
+    connection = await amqp.connect(amqpServer).then(console.log('hi'));
     channel = await connection.createChannel();
     await channel.assertQueue("PRODUCT");
+   } catch (error) {
+       console.log(error)
+   }
 }
 connect();
 
-app.get('/buy', (req, res)=>{
-    res.send('this is working')
-})
+// app.get('/buy', (req, res)=>{
+//     res.send('this is working')
+// })
 
 app.post("/buy", async (req, res) => {
     const { ids } = req.body;

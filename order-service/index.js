@@ -33,7 +33,7 @@ function createOrder(products, userEmail) {
 }
 
 async function connect() {
-    const amqpServer = "amqp://localhost:5672";
+    const amqpServer = "amqp://rabbitmq:5672";
     // const amqpServer = "amqp://guest:guest@rabbitmq:5672"
     connection = await amqp.connect(amqpServer);
     channel = await connection.createChannel();
