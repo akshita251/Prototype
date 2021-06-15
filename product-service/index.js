@@ -10,7 +10,7 @@ var channel, connection;
 
 app.use(express.json());
 mongoose.connect(
-    "mongodb://localhost:27017/product-service",
+    "mongodb://mongodb:27017/product-service",
     {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -37,24 +37,24 @@ connect();
 // })
 
 app.post("/buy", async (req, res) => {
-    const { ids } = req.body;
-    const products = await Product.find({ _id: { $in: ids } });
-    channel.sendToQueue(
+    const products = await Product.find({ _id: { $in: req.body._id } });
+    console.log(products)
+     channel.sendToQueue(
         "ORDER",
         Buffer.from(
             JSON.stringify({
-                products,
-                userEmail: req.user.email,
+                products
             })
         )
     );
     channel.consume("PRODUCT", (data) => {
         console.log('Consuming PRODUCT service')
         order = JSON.parse(data.content);
-        channel.ack(data)
-        return res.json(order);
-
-    });
+        console.log(order)
+        channel.ack(data)        
+    }).then( res.json(order))
+   
+   
 });
 
 app.post("/create", async (req, res) => {

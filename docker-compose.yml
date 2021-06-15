@@ -1,24 +1,30 @@
 version: '3'
 services:
   order:
-    build: order-service/.
+    image: vaidehibhagwat/prototype_order
     depends_on: 
       - rabbitmq
       - mongodb
     networks:
       - web
     restart: always
+    links:
+      - rabbitmq
+      - mongodb
   product:
-    build: product-service/.
+    image: vaidehibhagwat/prototype_product
     depends_on: 
       - rabbitmq
       - mongodb
     restart: always
     networks:
       - web
+    links:
+      - rabbitmq
+      - mongodb
  
   auth:
-    build: auth/.
+    image: vaidehibhagwat/prototype_auth 
     networks:
       - web
   nginx:
@@ -33,6 +39,10 @@ services:
     image: mongo
     ports:
       - "27017:27017"
+    networks:
+      - web
+    volumes: 
+      - dbdata:/data/db
   rabbitmq: 
     image: rabbitmq:3-management
     environment:
@@ -46,3 +56,6 @@ services:
 networks:
   web:
     driver: bridge
+volumes: 
+  dbdata:
+  
