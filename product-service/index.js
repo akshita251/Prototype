@@ -51,8 +51,9 @@ app.post("/buy", async (req, res) => {
         console.log('Consuming PRODUCT service')
         order = JSON.parse(data.content);
         console.log(order)
-        channel.ack(data)        
-    }).then( res.json(order))
+        channel.ack(data)   
+        res.json(order)     
+    })
    
    
 });

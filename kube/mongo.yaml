@@ -36,6 +36,10 @@ spec:
       containers:
         - name: mongo
           image: mongo:3.6.17-xenial
+          resources:
+           limits:
+             memory: 512Mi
+             cpu: "1"
           ports:
             - containerPort: 27017
           volumeMounts:

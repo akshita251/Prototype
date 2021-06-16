@@ -27,6 +27,10 @@ spec:
       containers:
       - name: auth
         image: vaidehibhagwat/prototype_auth
+        resources:
+           limits:
+             memory: 512Mi
+             cpu: "1"
         ports:
         - containerPort: 8080
         
