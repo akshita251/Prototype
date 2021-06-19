@@ -1,83 +1,48 @@
-apiVersion: v1
-kind: ConfigMap
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: nginx-config
-data:
-  nginx.conf: |
-    events {
-    worker_connections 1024;
-    }
-    http {
-      resolver 127.0.0.11 valid=10s ;
-      server {
-          listen 8080;
-          location /create {
-              auth_request /auth;
-              set $product_service product:8080;
-              proxy_pass http://$product_service/create;
-          }
-          location /buy {
-            auth_request /auth;
-            set $product_service product:8080;
-            proxy_pass http://$product_service/buy;
-          }
-          location /auth {
-            internal;
-            set $auth auth:8080;
-            proxy_pass http://$auth/authenticated;
-          }
-      }
-    }
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx
-  labels:
-    app: nginx  
+  name: hello-kubernetes-ingress
+  annotations:
+     kubernetes.io/ingress.class: nginx
 spec:
-  selector:
-    matchLabels:
-      app: nginx
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: nginx
-        image: nginx
-        resources:
-         limits:
-           memory: 512Mi
-           cpu: "1"
-        ports:
-        - containerPort: 80
-        volumeMounts:
-        - mountPath: /etc/nginx/nginx.conf # mount nginx-conf volumn to /etc/nginx
-          readOnly: true
-          name: nginx-config
-          subPath: nginx.conf
-      volumes:
-      - name: nginx-config
-        configMap:
-          name: nginx-config # place ConfigMap `nginx-conf` on /etc/nginx
-          items:
-            - key: nginx.conf
-              path: nginx.conf
-      - name: log
-        emptyDir: {}
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: nginx
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 80
-    targetPort: 80
-  selector:
-    app: nginx
+  rules:
+  - host: prototype.info
+    http:
+      paths:
+      - pathType: Prefix
+        path: /create
+        backend:
+          service:
+            name: product
+            port:
+              number: 80
+  - host: prototype.info
+    http:
+      paths:
+      - pathType: Prefix
+        path: /buy
+        backend:
+          service:
+            name: product
+            port:
+              number: 80
+  - host: prototype.info
+    http:
+      paths:
+      - pathType: Prefix
+        path: /health
+        backend:
+          service:
+            name: product
+            port:
+              number: 80
+  - host: prototype.info
+    http:
+      paths:
+      - pathType: Prefix
+        path: /authenticated
+        backend:
+          service:
+            name: auth
+            port:
+              number: 80

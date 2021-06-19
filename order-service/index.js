@@ -7,7 +7,7 @@ const amqp = require("amqplib");
 var channel, connection;
 
 mongoose.connect(
-    "mongodb://mongodb:27017/order-service",
+    "mongodb://mongo:27017/order-service",
     {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -33,7 +33,7 @@ function createOrder(products, userEmail) {
 }
 
 async function connect() {
-    const amqpServer = "amqp://rabbitmq:5672";
+    const amqpServer = "amqp://guest:guest@rabbitmq-service:5672/"
     connection = await amqp.connect(amqpServer);
     channel = await connection.createChannel();
     await channel.assertQueue("ORDER");

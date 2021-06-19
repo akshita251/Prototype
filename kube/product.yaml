@@ -7,7 +7,6 @@ spec:
  ports:
   - port: 80
     targetPort: 8080
-    nodePort: 32765
  selector:
     app: product
 ---
@@ -26,12 +25,8 @@ spec:
         app: product
     spec:
       containers:
-      - name: product
-        image: vaidehibhagwat/prototype_product
-        resources:
-           limits:
-             memory: 512Mi
-             cpu: "1"
-        ports:
-        - containerPort: 8080
+        - name: product
+          image: vaidehibhagwat/prototype_product:1.0.0
+          ports:
+            - containerPort: 8080
         

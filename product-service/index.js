@@ -10,19 +10,21 @@ var channel, connection;
 
 app.use(express.json());
 mongoose.connect(
-    "mongodb://mongodb:27017/product-service",
+    "mongodb://mongo:27017/product-service",
     {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     },
     () => {
         console.log(`Product-Service DB Connected`);
+        
     }
+    
 );
 
 async function connect() {
    try {
-    const amqpServer = "amqp://rabbitmq:5672"
+    const amqpServer = "amqp://guest:guest@rabbitmq-service:5672/"
     connection = await amqp.connect(amqpServer).then(console.log('hi'));
     channel = await connection.createChannel();
     await channel.assertQueue("PRODUCT");
@@ -32,9 +34,9 @@ async function connect() {
 }
 connect();
 
-// app.get('/buy', (req, res)=>{
-//     res.send('this is working')
-// })
+app.get('/health', (req, res)=>{
+    res.send('this is working')
+})
 
 app.post("/buy", async (req, res) => {
     const products = await Product.find({ _id: { $in: req.body._id } });

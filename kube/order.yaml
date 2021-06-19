@@ -26,11 +26,7 @@ spec:
     spec:
       containers:
       - name: order
-        image: vaidehibhagwat/prototype_order
-        resources:
-           limits:
-             memory: 512Mi
-             cpu: "1"
+        image: vaidehibhagwat/prototype_order:1.0.0
         ports:
         - containerPort: 8080
         
